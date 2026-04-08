@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Figurita ESRN Rural 2026</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Condensed:wght@400;700&family=League+Spartan:wght@400;700&display=swap');
+
+        :root {
+            --azul-afa: #002d4a;
+            --celeste-linea: #74acdf;
+            --color-sede: #74acdf;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+            background: #cbd5e1;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .main-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .editor-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .preview-wrapper {
+            width: 405px;
+            height: 531px;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            background: white;
+            position: relative;
+        }
+
+        .preview-wrapper #capture-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .preview-wrapper .sticker {
+            transform-origin: top left;
+            transform: scale(0.3);
+        }
+
+        .input-group { margin-bottom: 12px; }
+
+        .input-group label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: var(--azul-afa);
+            text-transform: uppercase;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-descargar {
+            width: 100%;
+            padding: 15px;
+            background: #059669;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #capture-area {
+            width: 1350px;
+            height: 1770px;
+        }
+
+        .sticker {
+            width: 1350px;
+            height: 1770px;
+            background: #fff;
+            border-radius: 60px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .sticker-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 60px;
+            border: 12px solid white;
+            background-image: linear-gradient(to bottom, #74acdf 0%, #ffffff 50%, #74acdf 100%);
+            z-index: 1;
+        }
+
+        .sticker::after {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 8px solid var(--celeste-linea);
+            border-radius: 70px;
+            pointer-events: none;
+            z-index: -1;
+            background: transparent;
+        }
+
+        .stars-container {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 20px;
+            z-index: 20;
+        }
+
+        .star { color: #ffd700; font-size: 4.5rem; }
+        .star.main { font-size: 7rem; align-self: flex-start; }
+
+        .arg-flag {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 100px;
+            height: 70px;
+            border: 4px solid white;
+            border-radius: 8px;
+            background: linear-gradient(to bottom, #74acdf 33%, #fff 33%, #fff 66%, #74acdf 66%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            z-index: 20;
+        }
+
+        .gold-frame {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1200px;
+            height: 1100px;
+            background: linear-gradient(135deg, #d4af37 0%, #f9e79f 25%, #d4af37 50%, #f9e79f 75%, #d4af37 100%);
+            padding: 20px;
+            border-radius: 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        .image-viewport {
+            width: 100%;
+            height: 100%;
+            background: #eee;
+            border-radius: 25px;
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+        }
+
+        #outPhoto {
+            position: absolute;
+            max-width: none;
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: contain;
+            transform-origin: center;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .player-name {
+            position: absolute;
+            top: 1080px;
+            left: 0;
+            right: 0;
+            background: var(--color-sede);
+            color: white;
+            font-family: 'Oswald';
+            text-align: center;
+            font-size: 7rem;
+            padding: 15px 0;
+            text-transform: uppercase;
+            transform: skewY(0deg);
+            z-index: 30;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .info-box {
+            position: absolute;
+            top: 1280px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1100px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 30px;
+            padding: 25px;
+            z-index: 10;
+        }
+
+        .info-row { 
+            display: flex; 
+            font-size: 3.5rem; 
+            padding: 15px 0; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            font-family: 'League Spartan', sans-serif;
+            align-items: center;
+            line-height: 1;
+        }
+        .info-label { width: auto; font-weight: 900; color: var(--azul-afa); display: flex; align-items: center; gap: 40px; font-size: 3.5rem; line-height: 1; padding-right: 30px; }
+        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; font-family: 'League Spartan', sans-serif; font-size: 3.5rem; display: flex; align-items: center; line-height: 1; }
+
+        .footer-sticker {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            z-index: 10;
+            letter-spacing: 8px;
+            font-family: 'League Spartan', sans-serif;
+        }
+
+        @media (max-width: 800px) {
+            .main-wrapper {
+                flex-direction: column;
+                align-items: center;
+                padding: 10px;
+                gap: 15px;
+            }
+
+            .editor-card {
+                width: 100%;
+                max-width: 380px;
+                order: 0;
+            }
+
+            .preview-wrapper {
+                width: 100%;
+                max-width: 380px;
+                height: 510px;
+                order: 1;
+                overflow: auto;
+                border-radius: 15px;
+            }
+
+            .preview-wrapper #capture-area {
+                width: 1350px;
+                height: 1770px;
+                transform: scale(0.22);
+                transform-origin: center center;
+                position: relative;
+            }
+
+            .preview-wrapper {
+                width: 100%;
+                max-width: 380px;
+                height: 390px;
+                order: 1;
+                overflow: hidden;
+                border-radius: 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #f8f8f8;
+            }
+
+            .preview-wrapper .sticker {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="editor-card">
+            <h3 style="margin-top:0">Editor ESRN Rural 2026</h3>
+            <div class="input-group"><label>Nombre y Apellido</label><input type="text" id="inName" placeholder="LIONEL MESSI" oninput="sync()"></div>
+            <div class="input-group"><label>Sede / Anexo</label>
+                <select id="inSede" onchange="sync()">
+                    <option value="#38bdf8">Anexo N° 1 Chelforó</option>
+                    <option value="#fb923c">Anexo N° 4 Aguada de Guerra</option>
+                    <option value="#4ade80">Anexo N° 5 Rincón Treneta</option>
+                    <option value="#f87171">Anexo N° 6 Comicó</option>
+                    <option value="#818cf8">Anexo N° 8 Yaminué</option>
+                    <option value="#2dd4bf">Anexo N° 9 Cerro Policia</option>
+                    <option value="#fbbf24">Anexo N° 10 Aguada Guzmán</option>
+                    <option value="#60a5fa">Anexo N° 11 Mencué</option>
+                    <option value="#f472b6">Anexo N° 12 Corralito</option>
+                    <option value="#22d3ee">Anexo N° 13 Naupahuen</option>
+                    <option value="#fb7185">Anexo N° 14 Río Chico</option>
+                    <option value="#94a3b8">Anexo N° 15 Mamuel Choique</option>
+                    <option value="#34d399">Anexo N° 16 Aguada Cecilio</option>
+                    <option value="#60a5fa">Anexo N° 17 Sierra Paileman</option>
+                    <option value="#c084fc">Anexo N° 18 Arroyo Los Berros</option>
+                    <option value="#86efac">Anexo N° 19 Peñas Blancas</option>
+                    <option value="#93c5fd">Anexo N° 20 Laguna Blanca</option>
+                    <option value="#74acdf" selected>Anexo N° 21 Cona Niyeu</option>
+                    <option value="#fca5a5">Anexo N° 22 El Caín</option>
+                    <option value="#5eead4">Anexo N° 23 Lago Pellegrini</option>
+                    <option value="#fdba74">Anexo N° 24 Villa Llanquín</option>
+                    <option value="#94a3b8">Anexo N° 27 El Manso</option>
+                    <option value="#67e8f9">Anexo N° 28 El Cóndor</option>
+                    <option value="#bef264">Anexo N° 32 Valle Verde</option>
+                    <option value="#fda4af">Anexo N° 36 Colan Conhué</option>
+                    <option value="#94a3b8">Anexo N° 37 Blancura Centro</option>
+                </select>
+            </div>
+            <div class="input-group"><label>Habilidad Principal</label><input type="text" id="inHab" oninput="sync()"></div>
+            <div class="input-group"><label>Gustos / Hobbies</label><input type="text" id="inHob" oninput="sync()"></div>
+            <div class="input-group"><label>Nació el...</label><input type="date" id="inBirth" oninput="sync()"></div>
+            <div class="input-group"><label>Zoom Foto</label><input type="range" id="inZoom" min="50" max="300" value="100" oninput="ajustarImagen()"></div>
+            <div class="input-group"><label>Cargar Foto</label><input type="file" accept="image/*" onchange="previewImg(event)"></div>
+            <button class="btn-descargar" onclick="download()">DESCARGAR FIGURITA</button>
+        </div>
+
+        <div class="preview-wrapper">
+            <div id="capture-area">
+                <div class="sticker" id="card">
+                    <div class="sticker-bg"></div>
+                    <div class="arg-flag">☀️</div>
+                    <div class="stars-container">
+                        <span class="star">★</span><span class="star main">★</span><span class="star">★</span>
+                    </div>
+                    <div class="gold-frame">
+                        <div class="image-viewport" id="viewport">
+                            <img id="outPhoto" src="https://via.placeholder.com/400?text=FOTO" alt="Foto">
+                        </div>
+                    </div>
+                    <h2 class="player-name" id="outName">JUGADOR</h2>
+                    <div class="info-box">
+                        <div class="info-row"><div class="info-label">📍 SEDE:</div><div class="info-value" id="outSede">CONA NIYEU</div></div>
+                        <div class="info-row"><div class="info-label">🚀 HAB:</div><div class="info-value" id="outHab">---</div></div>
+                        <div class="info-row"><div class="info-label">🎨 GUSTOS:</div><div class="info-value" id="outHob">---</div></div>
+                        <div class="info-row"><div class="info-label">📅 NACIÓ:</div><div class="info-value" id="outBirth">--/--/----</div></div>
+                    </div>
+                    <div class="footer-sticker">ESRN RURAL VIRTUAL</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const img = document.getElementById('outPhoto');
+        const zoomInp = document.getElementById('inZoom');
+        const viewport = document.getElementById('viewport');
+        
+        let isDragging = false;
+        let startX, startY;
+        let imgX = 0, imgY = 0;
+        let initialDistance = 0;
+        let initialScale = 1;
+        
+        function getDistance(touches) {
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        function ajustarImagen() {
+            const scale = zoomInp.value / 100;
+            img.style.transform = `translate(${imgX}px, ${imgY}px) scale(${scale})`;
+        }
+
+        viewport.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            viewport.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        viewport.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+                initialDistance = getDistance(e.touches);
+                initialScale = zoomInp.value / 100;
+                isDragging = false;
+            }
+            e.preventDefault();
+        }, {passive: false});
+
+        window.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            imgX += dx;
+            imgY += dy;
+            startX = e.clientX;
+            startY = e.clientY;
+            ajustarImagen();
+        });
+
+        window.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 1 && isDragging) {
+                const dx = e.touches[0].clientX - startX;
+                const dy = e.touches[0].clientY - startY;
+                imgX += dx;
+                imgY += dy;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                ajustarImagen();
+            } else if (e.touches.length === 2) {
+                const currentDistance = getDistance(e.touches);
+                const scale = initialScale * (currentDistance / initialDistance);
+                zoomInp.value = Math.max(50, Math.min(300, scale * 100));
+                ajustarImagen();
+            }
+            e.preventDefault();
+        }, {passive: false});
+
+        window.addEventListener('mouseup', function() {
+            isDragging = false;
+            viewport.style.cursor = 'grab';
+        });
+
+        window.addEventListener('touchend', function() {
+            isDragging = false;
+        });
+
+        viewport.addEventListener('mouseleave', function() {
+            isDragging = false;
+            viewport.style.cursor = 'grab';
+        });
+
+        function sync() {
+            const s = document.getElementById('inSede');
+            document.documentElement.style.setProperty('--color-sede', s.value);
+            document.getElementById('outName').innerText = document.getElementById('inName').value || 'JUGADOR';
+            let fullSede = s.options[s.selectedIndex].text;
+            document.getElementById('outSede').innerText = fullSede.replace('Anexo N° ', '').replace(/\d+\s/, '').trim().toUpperCase();
+            document.getElementById('outHab').innerText = document.getElementById('inHab').value || '---';
+            document.getElementById('outHob').innerText = document.getElementById('inHob').value || '---';
+            const b = document.getElementById('inBirth').value;
+            if(b) {
+                const p = b.split('-');
+                document.getElementById('outBirth').innerText = `${p[2]}/${p[1]}/${p[0]}`;
+            }
+        }
+
+        function previewImg(e) {
+            const r = new FileReader();
+            r.onload = () => {
+                img.src = r.result;
+                imgX = 0;
+                imgY = 0;
+                zoomInp.value = 100;
+                ajustarImagen();
+            };
+            if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
+        }
+
+        function download() {
+            const card = document.querySelector('.sticker');
+            const previewWrapper = document.querySelector('.preview-wrapper');
+            
+            const nombre = document.getElementById('inName').value.trim().toUpperCase().replace(/\s+/g, '_') || 'JUGADOR';
+            const sedeSelect = document.getElementById('inSede');
+            const sede = sedeSelect.options[sedeSelect.selectedIndex].text.replace('Anexo N° ', '').replace(/\d+\s/, '').trim().toUpperCase().replace(/\s+/g, '_');
+            
+            previewWrapper.style.visibility = 'hidden';
+            
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'fixed';
+            tempContainer.style.left = '-9999px';
+            tempContainer.style.top = '-9999px';
+            document.body.appendChild(tempContainer);
+            
+            const cardClone = card.cloneNode(true);
+            cardClone.style.transform = 'none';
+            tempContainer.appendChild(cardClone);
+            
+            setTimeout(() => {
+                html2canvas(cardClone, { 
+                    scale: 3,
+                    useCORS: true,
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
+                    document.body.removeChild(tempContainer);
+                    previewWrapper.style.visibility = 'visible';
+                    
+                    const l = document.createElement('a');
+                    l.download = `${sede}__${nombre}.png`;
+                    l.href = canvas.toDataURL('image/png');
+                    l.click();
+                });
+            }, 100);
+        }
+        
+        sync();
+    </script>
+</body>
+</html>
