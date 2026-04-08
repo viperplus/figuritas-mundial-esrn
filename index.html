@@ -105,7 +105,7 @@
 
         .arg-flag {
             position: absolute;
-            top: 30px; left: 30px;
+            top: 30px; right: 20px;
             width: 100px; height: 70px;
             border: 4px solid white; border-radius: 8px;
             background: linear-gradient(to bottom, #74acdf 33%, #fff 33%, #fff 66%, #74acdf 66%);
@@ -177,6 +177,7 @@
             text-align: center; font-size: 2rem; font-weight: bold;
             color: white; z-index: 10; letter-spacing: 8px;
             font-family: 'League Spartan', sans-serif;
+            left: 50%; transform: translateX(-50%);
         }
 
         .input-group { margin-bottom: 12px; }
@@ -201,7 +202,7 @@
 
     <div class="main-wrapper">
         <div class="editor-card">
-            <h3 style="margin-top:0; color: #002d4a; border-bottom: 2px solid #74acdf; margin-bottom: 15px;">ESRN RURAL 2026</h3>
+            <h3 style="margin-top:0; color: #002d4a; border-bottom: 2px solid #74acdf; margin-bottom: 15px; font-family: 'Oswald', sans-serif; text-align: center;">FIGURITAS ESRN RURAL 2026</h3>
             <div class="input-group"><label>Nombre y Apellido</label><input type="text" id="inName" placeholder="LIONEL MESSI" oninput="sync()"></div>
             <div class="input-group"><label>Sede / Anexo</label>
                 <select id="inSede" onchange="sync()">
@@ -261,7 +262,7 @@
                         <div class="info-row"><div class="info-label">🎨 GUSTOS:</div><div class="info-value" id="outHob">---</div></div>
                         <div class="info-row"><div class="info-label">📅 NACIÓ:</div><div class="info-value" id="outBirth">--/--/----</div></div>
                     </div>
-                    <div class="footer-sticker">ESRN RURAL VIRTUAL</div>
+                    <div class="footer-sticker">ESRN RURAL 2026</div>
                 </div>
             </div>
         </div>
