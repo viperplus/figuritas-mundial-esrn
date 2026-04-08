@@ -44,7 +44,6 @@
             z-index: 100;
         }
 
-        /* Contenedor de la visualización */
         .preview-wrapper {
             width: 405px;
             height: 531px;
@@ -55,7 +54,6 @@
             position: relative;
         }
 
-        /* Area real de 1350x1770 escalada para verse pequeña */
         #capture-area {
             width: 1350px;
             height: 1770px;
@@ -82,6 +80,17 @@
             border: 12px solid white;
             background-image: linear-gradient(to bottom, #74acdf 0%, #ffffff 50%, #74acdf 100%);
             z-index: 1;
+        }
+
+        .sticker::after {
+            content: "";
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border: 8px solid var(--celeste-linea);
+            border-radius: 70px;
+            pointer-events: none;
+            z-index: -1;
+            background: transparent;
         }
 
         .stars-container {
@@ -120,7 +129,7 @@
             background: #eee; border-radius: 25px;
             overflow: hidden; position: relative;
             cursor: grab;
-            touch-action: none; /* Crucial para manejar el arrastre manualmente */
+            touch-action: none;
         }
 
         #outPhoto {
@@ -158,9 +167,10 @@
             padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.05); 
             font-family: 'League Spartan', sans-serif;
             align-items: center;
+            line-height: 1;
         }
-        .info-label { font-weight: 900; color: var(--azul-afa); padding-right: 30px; }
-        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; }
+        .info-label { font-weight: 900; color: var(--azul-afa); padding-right: 30px; font-family: 'League Spartan', sans-serif; font-size: 3.5rem; line-height: 1; }
+        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; font-family: 'League Spartan', sans-serif; font-size: 3.5rem; display: flex; align-items: center; line-height: 1; }
 
         .footer-sticker {
             position: absolute; bottom: 30px; left: 0; right: 0;
@@ -169,19 +179,17 @@
             font-family: 'League Spartan', sans-serif;
         }
 
-        /* ESTILOS DE FORMULARIO */
         .input-group { margin-bottom: 12px; }
         .input-group label { display: block; font-size: 0.7rem; font-weight: bold; margin-bottom: 3px; color: var(--azul-afa); text-transform: uppercase; }
         .input-group input, .input-group select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; }
         .btn-descargar { width: 100%; padding: 15px; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-        /* RESPONSIVE PARA MÓVILES */
         @media (max-width: 800px) {
             .main-wrapper { flex-direction: column; align-items: center; }
             .editor-card { width: 100%; max-width: 380px; }
             .preview-wrapper {
                 width: 320px;
-                height: 419px; /* Proporcional a la escala 0.237 */
+                height: 419px;
             }
             #capture-area {
                 transform: scale(0.237);
@@ -279,7 +287,6 @@
             img.style.transform = `translate(${imgX}px, ${imgY}px) scale(${scale})`;
         }
 
-        // --- Eventos de Mouse ---
         viewport.addEventListener('mousedown', (e) => {
             isDragging = true;
             startX = e.clientX - imgX;
@@ -299,7 +306,6 @@
             viewport.style.cursor = 'grab';
         });
 
-        // --- Eventos de Toque (Corregidos para permitir Scroll) ---
         viewport.addEventListener('touchstart', (e) => {
             if (e.touches.length === 1) {
                 isDragging = true;
@@ -313,13 +319,11 @@
 
         viewport.addEventListener('touchmove', (e) => {
             if (e.touches.length === 1 && isDragging) {
-                // Si el usuario está moviendo la foto, bloqueamos el scroll de la página
                 if (e.cancelable) e.preventDefault(); 
                 imgX = e.touches[0].clientX - startX;
                 imgY = e.touches[0].clientY - startY;
                 ajustarImagen();
             } else if (e.touches.length === 2) {
-                // Zoom con dos dedos
                 if (e.cancelable) e.preventDefault();
                 const currentDistance = getDistance(e.touches);
                 const scale = initialScale * (currentDistance / initialDistance);
@@ -330,7 +334,6 @@
 
         viewport.addEventListener('touchend', () => { isDragging = false; });
 
-        // --- Sincronización de Datos ---
         function sync() {
             const s = document.getElementById('inSede');
             document.documentElement.style.setProperty('--color-sede', s.value);
@@ -350,7 +353,6 @@
             }
         }
 
-        // --- Previsualizar Imagen ---
         function previewImg(e) {
             const r = new FileReader();
             r.onload = () => {
@@ -362,12 +364,13 @@
             if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
         }
 
-        // --- Descargar Figurita ---
         function download() {
             const card = document.getElementById('card');
-            const nombre = document.getElementById('inName').value.trim().toUpperCase().replace(/\s+/g, '_') || 'JUGADOR';
             
-            // Crear un contenedor temporal oculto para renderizar la imagen en tamaño real
+            const nombre = document.getElementById('inName').value.trim().toUpperCase().replace(/\s+/g, '_') || 'JUGADOR';
+            const sedeSelect = document.getElementById('inSede');
+            const sede = sedeSelect.options[sedeSelect.selectedIndex].text.replace('Anexo N° ', '').replace(/\d+\s/, '').trim().toUpperCase().replace(/\s+/g, '_');
+            
             const tempContainer = document.createElement('div');
             tempContainer.style.position = 'absolute';
             tempContainer.style.left = '-5000px';
@@ -377,15 +380,14 @@
             const cardClone = card.cloneNode(true);
             tempContainer.appendChild(cardClone);
 
-            // Pequeña espera para asegurar que el clon esté listo
             setTimeout(() => {
                 html2canvas(cardClone, {
-                    scale: 2, // Calidad alta
+                    scale: 2,
                     useCORS: true,
                     backgroundColor: null
                 }).then(canvas => {
                     const link = document.createElement('a');
-                    link.download = `FIGURITA_ESRN_${nombre}.png`;
+                    link.download = `${sede}__${nombre}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                     document.body.removeChild(tempContainer);
@@ -393,7 +395,6 @@
             }, 100);
         }
         
-        // Inicializar
         sync();
     </script>
 </body>
