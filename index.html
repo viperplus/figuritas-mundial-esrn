@@ -23,7 +23,6 @@
             justify-content: center;
             padding: 20px;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         .main-wrapper {
@@ -275,24 +274,7 @@
             .preview-wrapper {
                 width: 100%;
                 max-width: 380px;
-                height: 510px;
-                order: 1;
-                overflow: auto;
-                border-radius: 15px;
-            }
-
-            .preview-wrapper #capture-area {
-                width: 1350px;
-                height: 1770px;
-                transform: scale(0.22);
-                transform-origin: center center;
-                position: relative;
-            }
-
-            .preview-wrapper {
-                width: 100%;
-                max-width: 380px;
-                height: 390px;
+                height: 400px;
                 order: 1;
                 overflow: auto;
                 border-radius: 15px;
@@ -301,6 +283,14 @@
                 align-items: center;
                 background: #f8f8f8;
                 -webkit-overflow-scrolling: touch;
+            }
+
+            .preview-wrapper #capture-area {
+                width: 1350px;
+                height: 1770px;
+                transform: scale(0.22);
+                transform-origin: center center;
+                position: relative;
             }
 
             .preview-wrapper .sticker {
