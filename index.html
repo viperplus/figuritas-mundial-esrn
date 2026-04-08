@@ -54,6 +54,7 @@
             position: relative;
         }
 
+        /* Área que se captura realmente */
         #capture-area {
             width: 1350px;
             height: 1770px;
@@ -80,17 +81,6 @@
             border: 12px solid white;
             background-image: linear-gradient(to bottom, #74acdf 0%, #ffffff 50%, #74acdf 100%);
             z-index: 1;
-        }
-
-        .sticker::after {
-            content: "";
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            border: 8px solid var(--celeste-linea);
-            border-radius: 70px;
-            pointer-events: none;
-            z-index: -1;
-            background: transparent;
         }
 
         .stars-container {
@@ -169,32 +159,36 @@
             align-items: center;
             line-height: 1;
         }
-        .info-label { font-weight: 900; color: var(--azul-afa); padding-right: 30px; font-family: 'League Spartan', sans-serif; font-size: 3.5rem; line-height: 1; }
-        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; font-family: 'League Spartan', sans-serif; font-size: 3.5rem; display: flex; align-items: center; line-height: 1; }
+        .info-label { font-weight: 900; color: var(--azul-afa); padding-right: 30px; font-size: 3.5rem; }
+        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; font-size: 3.5rem; }
 
         .footer-sticker {
-            position: absolute; bottom: 30px; left: 0; right: 0;
+            position: absolute; bottom: 30px; left: 50%;
+            transform: translateX(-50%);
             text-align: center; font-size: 2rem; font-weight: bold;
             color: white; z-index: 10; letter-spacing: 8px;
             font-family: 'League Spartan', sans-serif;
-            left: 50%; transform: translateX(-50%);
         }
 
+        /* Estilos del Formulario */
         .input-group { margin-bottom: 12px; }
         .input-group label { display: block; font-size: 0.7rem; font-weight: bold; margin-bottom: 3px; color: var(--azul-afa); text-transform: uppercase; }
         .input-group input, .input-group select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; }
-        .btn-descargar { width: 100%; padding: 15px; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .btn-descargar { 
+            width: 100%; padding: 15px; 
+            background: #059669; color: white; 
+            border: none; border-radius: 8px; 
+            font-weight: bold; cursor: pointer; 
+            margin-top: 10px; transition: 0.3s;
+        }
+        .btn-descargar:disabled { background: #94a3b8; cursor: not-allowed; }
 
         @media (max-width: 800px) {
             .main-wrapper { flex-direction: column; align-items: center; }
             .editor-card { width: 100%; max-width: 380px; }
-            .preview-wrapper {
-                width: 320px;
-                height: 419px;
-            }
-            #capture-area {
-                transform: scale(0.237);
-            }
+            .preview-wrapper { width: 320px; height: 419px; }
+            #capture-area { transform: scale(0.237); }
         }
     </style>
 </head>
@@ -203,7 +197,9 @@
     <div class="main-wrapper">
         <div class="editor-card">
             <h3 style="margin-top:0; color: #002d4a; border-bottom: 2px solid #74acdf; margin-bottom: 15px; font-family: 'Oswald', sans-serif; text-align: center;">FIGURITAS ESRN RURAL 2026</h3>
+            
             <div class="input-group"><label>Nombre y Apellido</label><input type="text" id="inName" placeholder="LIONEL MESSI" oninput="sync()"></div>
+            
             <div class="input-group"><label>Sede / Anexo</label>
                 <select id="inSede" onchange="sync()">
                     <option value="#38bdf8">Anexo N° 1 Chelforó</option>
@@ -234,12 +230,14 @@
                     <option value="#94a3b8">Anexo N° 37 Blancura Centro</option>
                 </select>
             </div>
+
             <div class="input-group"><label>Habilidad Principal</label><input type="text" id="inHab" placeholder="VELOCIDAD" oninput="sync()"></div>
             <div class="input-group"><label>Gustos / Hobbies</label><input type="text" id="inHob" placeholder="FÚTBOL Y DIBUJO" oninput="sync()"></div>
             <div class="input-group"><label>Nació el...</label><input type="date" id="inBirth" oninput="sync()"></div>
             <div class="input-group"><label>Zoom Foto</label><input type="range" id="inZoom" min="10" max="400" value="100" oninput="ajustarImagen()"></div>
             <div class="input-group"><label>Cargar Foto</label><input type="file" accept="image/*" onchange="previewImg(event)"></div>
-            <button class="btn-descargar" onclick="download()">DESCARGAR FIGURITA</button>
+            
+            <button class="btn-descargar" id="btnMain" onclick="download()">DESCARGAR Y GUARDAR</button>
         </div>
 
         <div class="preview-wrapper">
@@ -272,17 +270,13 @@
         const img = document.getElementById('outPhoto');
         const zoomInp = document.getElementById('inZoom');
         const viewport = document.getElementById('viewport');
+        const btnMain = document.getElementById('btnMain');
         
         let isDragging = false;
         let startX, startY;
         let imgX = 0, imgY = 0;
-        let initialDistance = 0;
-        let initialScale = 1;
         
-        function getDistance(touches) {
-            return Math.sqrt(Math.pow(touches[0].clientX - touches[1].clientX, 2) + Math.pow(touches[0].clientY - touches[1].clientY, 2));
-        }
-        
+        // --- GESTIÓN DE IMAGEN (Zoom y Arrastre) ---
         function ajustarImagen() {
             const scale = zoomInp.value / 100;
             img.style.transform = `translate(${imgX}px, ${imgY}px) scale(${scale})`;
@@ -307,34 +301,26 @@
             viewport.style.cursor = 'grab';
         });
 
+        // Touch para celulares
         viewport.addEventListener('touchstart', (e) => {
             if (e.touches.length === 1) {
                 isDragging = true;
                 startX = e.touches[0].clientX - imgX;
                 startY = e.touches[0].clientY - imgY;
-            } else if (e.touches.length === 2) {
-                initialDistance = getDistance(e.touches);
-                initialScale = zoomInp.value / 100;
             }
         }, {passive: true});
 
         viewport.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 1 && isDragging) {
-                if (e.cancelable) e.preventDefault(); 
+            if (isDragging && e.touches.length === 1) {
                 imgX = e.touches[0].clientX - startX;
                 imgY = e.touches[0].clientY - startY;
                 ajustarImagen();
-            } else if (e.touches.length === 2) {
-                if (e.cancelable) e.preventDefault();
-                const currentDistance = getDistance(e.touches);
-                const scale = initialScale * (currentDistance / initialDistance);
-                zoomInp.value = Math.max(10, Math.min(400, scale * 100));
-                ajustarImagen();
             }
-        }, {passive: false});
+        }, {passive: true});
 
-        viewport.addEventListener('touchend', () => { isDragging = false; });
+        viewport.addEventListener('touchend', () => isDragging = false);
 
+        // --- SINCRONIZACIÓN DE DATOS ---
         function sync() {
             const s = document.getElementById('inSede');
             document.documentElement.style.setProperty('--color-sede', s.value);
@@ -365,17 +351,25 @@
             if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
         }
 
+        // --- FUNCIÓN DE DESCARGA Y SUBIDA ---
         function download() {
             const card = document.getElementById('card');
+            const originalBtnText = btnMain.innerText;
             
+            // UI: Bloquear botón mientras procesa
+            btnMain.innerText = "SUBIENDO A DRIVE...";
+            btnMain.disabled = true;
+
             const nombre = document.getElementById('inName').value.trim().toUpperCase().replace(/\s+/g, '_') || 'JUGADOR';
             const sedeSelect = document.getElementById('inSede');
-            const sede = sedeSelect.options[sedeSelect.selectedIndex].text.replace('Anexo N° ', '').replace(/\d+\s/, '').trim().toUpperCase().replace(/\s+/g, '_');
-            
+            const sedeText = sedeSelect.options[sedeSelect.selectedIndex].text;
+            const sedeClean = sedeText.replace('Anexo N° ', '').replace(/\d+\s/, '').trim().toUpperCase().replace(/\s+/g, '_');
+            const fileName = `${sedeClean}__${nombre}.png`;
+
+            // Clonar para captura en alta resolución
             const tempContainer = document.createElement('div');
             tempContainer.style.position = 'absolute';
             tempContainer.style.left = '-5000px';
-            tempContainer.style.top = '0';
             document.body.appendChild(tempContainer);
             
             const cardClone = card.cloneNode(true);
@@ -387,15 +381,43 @@
                     useCORS: true,
                     backgroundColor: null
                 }).then(canvas => {
+                    const base64Image = canvas.toDataURL('image/png');
+
+                    // 1. DESCARGA LOCAL
                     const link = document.createElement('a');
-                    link.download = `${sede}__${nombre}.png`;
-                    link.href = canvas.toDataURL('image/png');
+                    link.download = fileName;
+                    link.href = base64Image;
                     link.click();
-                    document.body.removeChild(tempContainer);
+
+                    // 2. ENVÍO A GOOGLE DRIVE
+                    const webAppUrl = "https://script.google.com/macros/s/AKfycbwra7bkFmm6k_cQWXv6r43AGhDSV4LSrWELPzLPL5_vUdZT2Q6jgYHFdt1oxN7aIRHi/exec"; 
+
+                    fetch(webAppUrl, {
+                        method: "POST",
+                        mode: "no-cors", 
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            image: base64Image,
+                            filename: fileName
+                        })
+                    })
+                    .then(() => {
+                        alert("✅ ¡LISTO! Figurita descargada y guardada en la carpeta del ESRN Rural.");
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("⚠️ Se descargó en tu equipo, pero hubo un error al subirla a Drive.");
+                    })
+                    .finally(() => {
+                        btnMain.innerText = originalBtnText;
+                        btnMain.disabled = false;
+                        document.body.removeChild(tempContainer);
+                    });
                 });
             }, 100);
         }
         
+        // Inicializar
         sync();
     </script>
 </body>
