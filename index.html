@@ -31,6 +31,7 @@
             align-items: flex-start;
             justify-content: center;
             padding: 20px;
+            flex-wrap: wrap;
         }
 
         .editor-card {
@@ -40,8 +41,10 @@
             width: 320px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             flex-shrink: 0;
+            z-index: 100;
         }
 
+        /* Contenedor de la visualización */
         .preview-wrapper {
             width: 405px;
             height: 531px;
@@ -52,50 +55,15 @@
             position: relative;
         }
 
-        .preview-wrapper #capture-area {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .preview-wrapper .sticker {
-            transform-origin: top left;
-            transform: scale(0.3);
-        }
-
-        .input-group { margin-bottom: 12px; }
-
-        .input-group label {
-            display: block;
-            font-size: 0.7rem;
-            font-weight: bold;
-            margin-bottom: 3px;
-            color: var(--azul-afa);
-            text-transform: uppercase;
-        }
-
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-        }
-
-        .btn-descargar {
-            width: 100%;
-            padding: 15px;
-            background: #059669;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
+        /* Area real de 1350x1770 escalada para verse pequeña */
         #capture-area {
             width: 1350px;
             height: 1770px;
+            transform: scale(0.3);
+            transform-origin: top left;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .sticker {
@@ -105,7 +73,6 @@
             border-radius: 60px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .sticker-bg {
@@ -117,30 +84,11 @@
             z-index: 1;
         }
 
-        .sticker::after {
-            content: "";
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border: 8px solid var(--celeste-linea);
-            border-radius: 70px;
-            pointer-events: none;
-            z-index: -1;
-            background: transparent;
-        }
-
         .stars-container {
             position: absolute;
-            top: 5px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            gap: 20px;
-            z-index: 20;
+            top: 5px; left: 0; right: 0;
+            display: flex; justify-content: center; align-items: flex-end;
+            gap: 20px; z-index: 20;
         }
 
         .star { color: #ffd700; font-size: 4.5rem; }
@@ -148,42 +96,31 @@
 
         .arg-flag {
             position: absolute;
-            top: 30px;
-            left: 30px;
-            width: 100px;
-            height: 70px;
-            border: 4px solid white;
-            border-radius: 8px;
+            top: 30px; left: 30px;
+            width: 100px; height: 70px;
+            border: 4px solid white; border-radius: 8px;
             background: linear-gradient(to bottom, #74acdf 33%, #fff 33%, #fff 66%, #74acdf 66%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            z-index: 20;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; z-index: 20;
         }
 
         .gold-frame {
             position: absolute;
-            top: 150px;
-            left: 50%;
+            top: 150px; left: 50%;
             transform: translateX(-50%);
-            width: 1200px;
-            height: 1100px;
+            width: 1200px; height: 1100px;
             background: linear-gradient(135deg, #d4af37 0%, #f9e79f 25%, #d4af37 50%, #f9e79f 75%, #d4af37 100%);
-            padding: 20px;
-            border-radius: 40px;
+            padding: 20px; border-radius: 40px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             z-index: 2;
         }
 
         .image-viewport {
-            width: 100%;
-            height: 100%;
-            background: #eee;
-            border-radius: 25px;
-            overflow: hidden;
-            position: relative;
+            width: 100%; height: 100%;
+            background: #eee; border-radius: 25px;
+            overflow: hidden; position: relative;
             cursor: grab;
+            touch-action: none; /* Crucial para manejar el arrastre manualmente */
         }
 
         #outPhoto {
@@ -193,108 +130,61 @@
             min-height: 100%;
             object-fit: contain;
             transform-origin: center;
-            cursor: grab;
             user-select: none;
         }
 
         .player-name {
             position: absolute;
-            top: 1080px;
-            left: 0;
-            right: 0;
+            top: 1080px; left: 0; right: 0;
             background: var(--color-sede);
-            color: white;
-            font-family: 'Oswald';
-            text-align: center;
-            font-size: 7rem;
-            padding: 15px 0;
-            text-transform: uppercase;
-            transform: skewY(0deg);
-            z-index: 30;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            color: white; font-family: 'Oswald';
+            text-align: center; font-size: 7rem;
+            padding: 15px 0; text-transform: uppercase;
+            z-index: 30; box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
 
         .info-box {
             position: absolute;
-            top: 1280px;
-            left: 50%;
+            top: 1280px; left: 50%;
             transform: translateX(-50%);
             width: 1100px;
             background: rgba(255,255,255,0.8);
-            border-radius: 30px;
-            padding: 25px;
+            border-radius: 30px; padding: 25px;
             z-index: 10;
         }
 
         .info-row { 
-            display: flex; 
-            font-size: 3.5rem; 
-            padding: 15px 0; 
-            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            display: flex; font-size: 3.5rem; 
+            padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.05); 
             font-family: 'League Spartan', sans-serif;
             align-items: center;
-            line-height: 1;
         }
-        .info-label { width: auto; font-weight: 900; color: var(--azul-afa); display: flex; align-items: center; gap: 40px; font-size: 3.5rem; line-height: 1; padding-right: 30px; }
-        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; font-family: 'League Spartan', sans-serif; font-size: 3.5rem; display: flex; align-items: center; line-height: 1; }
+        .info-label { font-weight: 900; color: var(--azul-afa); padding-right: 30px; }
+        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; }
 
         .footer-sticker {
-            position: absolute;
-            bottom: 30px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: white;
-            z-index: 10;
-            letter-spacing: 8px;
+            position: absolute; bottom: 30px; left: 0; right: 0;
+            text-align: center; font-size: 2rem; font-weight: bold;
+            color: white; z-index: 10; letter-spacing: 8px;
             font-family: 'League Spartan', sans-serif;
         }
 
+        /* ESTILOS DE FORMULARIO */
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 0.7rem; font-weight: bold; margin-bottom: 3px; color: var(--azul-afa); text-transform: uppercase; }
+        .input-group input, .input-group select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        .btn-descargar { width: 100%; padding: 15px; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+        /* RESPONSIVE PARA MÓVILES */
         @media (max-width: 800px) {
-            body {
-                padding: 10px;
-            }
-            
-            .main-wrapper {
-                flex-direction: column;
-                align-items: center;
-                padding: 10px;
-                gap: 15px;
-                width: 100%;
-            }
-
-            .editor-card {
-                width: 100%;
-                max-width: 380px;
-                order: 0;
-            }
-
+            .main-wrapper { flex-direction: column; align-items: center; }
+            .editor-card { width: 100%; max-width: 380px; }
             .preview-wrapper {
-                width: 100%;
-                max-width: 380px;
-                height: 400px;
-                order: 1;
-                overflow: auto;
-                border-radius: 15px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background: #f8f8f8;
-                -webkit-overflow-scrolling: touch;
+                width: 320px;
+                height: 419px; /* Proporcional a la escala 0.237 */
             }
-
-            .preview-wrapper #capture-area {
-                width: 1350px;
-                height: 1770px;
-                transform: scale(0.22);
-                transform-origin: center center;
-                position: relative;
-            }
-
-            .preview-wrapper .sticker {
-                transform: none;
+            #capture-area {
+                transform: scale(0.237);
             }
         }
     </style>
@@ -303,7 +193,7 @@
 
     <div class="main-wrapper">
         <div class="editor-card">
-            <h3 style="margin-top:0">Editor ESRN Rural 2026</h3>
+            <h3 style="margin-top:0; color: #002d4a; border-bottom: 2px solid #74acdf; margin-bottom: 15px;">ESRN RURAL 2026</h3>
             <div class="input-group"><label>Nombre y Apellido</label><input type="text" id="inName" placeholder="LIONEL MESSI" oninput="sync()"></div>
             <div class="input-group"><label>Sede / Anexo</label>
                 <select id="inSede" onchange="sync()">
@@ -335,10 +225,10 @@
                     <option value="#94a3b8">Anexo N° 37 Blancura Centro</option>
                 </select>
             </div>
-            <div class="input-group"><label>Habilidad Principal</label><input type="text" id="inHab" oninput="sync()"></div>
-            <div class="input-group"><label>Gustos / Hobbies</label><input type="text" id="inHob" oninput="sync()"></div>
+            <div class="input-group"><label>Habilidad Principal</label><input type="text" id="inHab" placeholder="VELOCIDAD" oninput="sync()"></div>
+            <div class="input-group"><label>Gustos / Hobbies</label><input type="text" id="inHob" placeholder="FÚTBOL Y DIBUJO" oninput="sync()"></div>
             <div class="input-group"><label>Nació el...</label><input type="date" id="inBirth" oninput="sync()"></div>
-            <div class="input-group"><label>Zoom Foto</label><input type="range" id="inZoom" min="50" max="300" value="100" oninput="ajustarImagen()"></div>
+            <div class="input-group"><label>Zoom Foto</label><input type="range" id="inZoom" min="10" max="400" value="100" oninput="ajustarImagen()"></div>
             <div class="input-group"><label>Cargar Foto</label><input type="file" accept="image/*" onchange="previewImg(event)"></div>
             <button class="btn-descargar" onclick="download()">DESCARGAR FIGURITA</button>
         </div>
@@ -353,7 +243,7 @@
                     </div>
                     <div class="gold-frame">
                         <div class="image-viewport" id="viewport">
-                            <img id="outPhoto" src="https://via.placeholder.com/400?text=FOTO" alt="Foto">
+                            <img id="outPhoto" src="https://via.placeholder.com/800x1000?text=SUBE+TU+FOTO" alt="Foto">
                         </div>
                     </div>
                     <h2 class="player-name" id="outName">JUGADOR</h2>
@@ -381,9 +271,7 @@
         let initialScale = 1;
         
         function getDistance(touches) {
-            const dx = touches[0].clientX - touches[1].clientX;
-            const dy = touches[0].clientY - touches[1].clientY;
-            return Math.sqrt(dx * dx + dy * dy);
+            return Math.sqrt(Math.pow(touches[0].clientX - touches[1].clientX, 2) + Math.pow(touches[0].clientY - touches[1].clientY, 2));
         }
         
         function ajustarImagen() {
@@ -391,78 +279,70 @@
             img.style.transform = `translate(${imgX}px, ${imgY}px) scale(${scale})`;
         }
 
-        viewport.addEventListener('mousedown', function(e) {
+        // --- Eventos de Mouse ---
+        viewport.addEventListener('mousedown', (e) => {
             isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
+            startX = e.clientX - imgX;
+            startY = e.clientY - imgY;
             viewport.style.cursor = 'grabbing';
-            e.preventDefault();
         });
 
-        viewport.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1) {
-                isDragging = true;
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-            } else if (e.touches.length === 2) {
-                initialDistance = getDistance(e.touches);
-                initialScale = zoomInp.value / 100;
-                isDragging = false;
-            }
-            e.preventDefault();
-        }, {passive: false});
-
-        window.addEventListener('mousemove', function(e) {
+        window.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-            imgX += dx;
-            imgY += dy;
-            startX = e.clientX;
-            startY = e.clientY;
+            imgX = e.clientX - startX;
+            imgY = e.clientY - startY;
             ajustarImagen();
         });
 
-        window.addEventListener('touchmove', function(e) {
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            viewport.style.cursor = 'grab';
+        });
+
+        // --- Eventos de Toque (Corregidos para permitir Scroll) ---
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                startX = e.touches[0].clientX - imgX;
+                startY = e.touches[0].clientY - imgY;
+            } else if (e.touches.length === 2) {
+                initialDistance = getDistance(e.touches);
+                initialScale = zoomInp.value / 100;
+            }
+        }, {passive: true});
+
+        viewport.addEventListener('touchmove', (e) => {
             if (e.touches.length === 1 && isDragging) {
-                const dx = e.touches[0].clientX - startX;
-                const dy = e.touches[0].clientY - startY;
-                imgX += dx;
-                imgY += dy;
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
+                // Si el usuario está moviendo la foto, bloqueamos el scroll de la página
+                if (e.cancelable) e.preventDefault(); 
+                imgX = e.touches[0].clientX - startX;
+                imgY = e.touches[0].clientY - startY;
                 ajustarImagen();
             } else if (e.touches.length === 2) {
+                // Zoom con dos dedos
+                if (e.cancelable) e.preventDefault();
                 const currentDistance = getDistance(e.touches);
                 const scale = initialScale * (currentDistance / initialDistance);
-                zoomInp.value = Math.max(50, Math.min(300, scale * 100));
+                zoomInp.value = Math.max(10, Math.min(400, scale * 100));
                 ajustarImagen();
             }
-            e.preventDefault();
         }, {passive: false});
 
-        window.addEventListener('mouseup', function() {
-            isDragging = false;
-            viewport.style.cursor = 'grab';
-        });
+        viewport.addEventListener('touchend', () => { isDragging = false; });
 
-        window.addEventListener('touchend', function() {
-            isDragging = false;
-        });
-
-        viewport.addEventListener('mouseleave', function() {
-            isDragging = false;
-            viewport.style.cursor = 'grab';
-        });
-
+        // --- Sincronización de Datos ---
         function sync() {
             const s = document.getElementById('inSede');
             document.documentElement.style.setProperty('--color-sede', s.value);
             document.getElementById('outName').innerText = document.getElementById('inName').value || 'JUGADOR';
+            
             let fullSede = s.options[s.selectedIndex].text;
-            document.getElementById('outSede').innerText = fullSede.replace('Anexo N° ', '').replace(/\d+\s/, '').trim().toUpperCase();
+            let cleanSede = fullSede.replace(/Anexo N° \d+ /, '').trim().toUpperCase();
+            document.getElementById('outSede').innerText = cleanSede;
+            
             document.getElementById('outHab').innerText = document.getElementById('inHab').value || '---';
             document.getElementById('outHob').innerText = document.getElementById('inHob').value || '---';
+            
             const b = document.getElementById('inBirth').value;
             if(b) {
                 const p = b.split('-');
@@ -470,56 +350,50 @@
             }
         }
 
+        // --- Previsualizar Imagen ---
         function previewImg(e) {
             const r = new FileReader();
             r.onload = () => {
                 img.src = r.result;
-                imgX = 0;
-                imgY = 0;
+                imgX = 0; imgY = 0;
                 zoomInp.value = 100;
                 ajustarImagen();
             };
             if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
         }
 
+        // --- Descargar Figurita ---
         function download() {
-            const card = document.querySelector('.sticker');
-            const previewWrapper = document.querySelector('.preview-wrapper');
-            
+            const card = document.getElementById('card');
             const nombre = document.getElementById('inName').value.trim().toUpperCase().replace(/\s+/g, '_') || 'JUGADOR';
-            const sedeSelect = document.getElementById('inSede');
-            const sede = sedeSelect.options[sedeSelect.selectedIndex].text.replace('Anexo N° ', '').replace(/\d+\s/, '').trim().toUpperCase().replace(/\s+/g, '_');
             
-            previewWrapper.style.visibility = 'hidden';
-            
+            // Crear un contenedor temporal oculto para renderizar la imagen en tamaño real
             const tempContainer = document.createElement('div');
-            tempContainer.style.position = 'fixed';
-            tempContainer.style.left = '-9999px';
-            tempContainer.style.top = '-9999px';
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.left = '-5000px';
+            tempContainer.style.top = '0';
             document.body.appendChild(tempContainer);
             
             const cardClone = card.cloneNode(true);
-            cardClone.style.transform = 'none';
             tempContainer.appendChild(cardClone);
-            
+
+            // Pequeña espera para asegurar que el clon esté listo
             setTimeout(() => {
-                html2canvas(cardClone, { 
-                    scale: 3,
+                html2canvas(cardClone, {
+                    scale: 2, // Calidad alta
                     useCORS: true,
-                    backgroundColor: null,
-                    logging: false
+                    backgroundColor: null
                 }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `FIGURITA_ESRN_${nombre}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
                     document.body.removeChild(tempContainer);
-                    previewWrapper.style.visibility = 'visible';
-                    
-                    const l = document.createElement('a');
-                    l.download = `${sede}__${nombre}.png`;
-                    l.href = canvas.toDataURL('image/png');
-                    l.click();
                 });
             }, 100);
         }
         
+        // Inicializar
         sync();
     </script>
 </body>
