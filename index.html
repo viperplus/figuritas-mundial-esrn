@@ -54,7 +54,6 @@
             position: relative;
         }
 
-        /* Área que se captura realmente */
         #capture-area {
             width: 1350px;
             height: 1770px;
@@ -81,6 +80,17 @@
             border: 12px solid white;
             background-image: linear-gradient(to bottom, #74acdf 0%, #ffffff 50%, #74acdf 100%);
             z-index: 1;
+        }
+
+        .sticker::after {
+            content: "";
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border: 8px solid var(--celeste-linea);
+            border-radius: 70px;
+            pointer-events: none;
+            z-index: -1;
+            background: transparent;
         }
 
         .stars-container {
@@ -159,8 +169,8 @@
             align-items: center;
             line-height: 1;
         }
-        .info-label { font-weight: 900; color: var(--azul-afa); padding-right: 30px; font-size: 3.5rem; }
-        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; font-size: 3.5rem; }
+        .info-label { font-weight: 900; color: var(--azul-afa); padding-right: 30px; font-family: 'League Spartan', sans-serif; font-size: 3.5rem; line-height: 1; }
+        .info-value { flex: 1; font-weight: bold; text-transform: uppercase; font-family: 'League Spartan', sans-serif; font-size: 3.5rem; display: flex; align-items: center; line-height: 1; }
 
         .footer-sticker {
             position: absolute; bottom: 30px; left: 50%;
@@ -170,7 +180,6 @@
             font-family: 'League Spartan', sans-serif;
         }
 
-        /* Estilos del Formulario */
         .input-group { margin-bottom: 12px; }
         .input-group label { display: block; font-size: 0.7rem; font-weight: bold; margin-bottom: 3px; color: var(--azul-afa); text-transform: uppercase; }
         .input-group input, .input-group select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; }
@@ -275,8 +284,13 @@
         let isDragging = false;
         let startX, startY;
         let imgX = 0, imgY = 0;
+        let initialDistance = 0;
+        let initialScale = 1;
         
-        // --- GESTIÓN DE IMAGEN (Zoom y Arrastre) ---
+        function getDistance(touches) {
+            return Math.sqrt(Math.pow(touches[0].clientX - touches[1].clientX, 2) + Math.pow(touches[0].clientY - touches[1].clientY, 2));
+        }
+        
         function ajustarImagen() {
             const scale = zoomInp.value / 100;
             img.style.transform = `translate(${imgX}px, ${imgY}px) scale(${scale})`;
@@ -301,26 +315,33 @@
             viewport.style.cursor = 'grab';
         });
 
-        // Touch para celulares
         viewport.addEventListener('touchstart', (e) => {
             if (e.touches.length === 1) {
                 isDragging = true;
                 startX = e.touches[0].clientX - imgX;
                 startY = e.touches[0].clientY - imgY;
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                initialDistance = getDistance(e.touches);
+                initialScale = zoomInp.value / 100;
             }
         }, {passive: true});
 
         viewport.addEventListener('touchmove', (e) => {
-            if (isDragging && e.touches.length === 1) {
+            if (e.touches.length === 1 && isDragging) {
                 imgX = e.touches[0].clientX - startX;
                 imgY = e.touches[0].clientY - startY;
                 ajustarImagen();
+            } else if (e.touches.length === 2) {
+                const currentDistance = getDistance(e.touches);
+                const scale = initialScale * (currentDistance / initialDistance);
+                zoomInp.value = Math.max(10, Math.min(400, scale * 100));
+                ajustarImagen();
             }
-        }, {passive: true});
+        }, {passive: false});
 
         viewport.addEventListener('touchend', () => isDragging = false);
 
-        // --- SINCRONIZACIÓN DE DATOS ---
         function sync() {
             const s = document.getElementById('inSede');
             document.documentElement.style.setProperty('--color-sede', s.value);
@@ -351,12 +372,10 @@
             if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
         }
 
-        // --- FUNCIÓN DE DESCARGA Y SUBIDA ---
         function download() {
             const card = document.getElementById('card');
             const originalBtnText = btnMain.innerText;
             
-            // UI: Bloquear botón mientras procesa
             btnMain.innerText = "SUBIENDO A DRIVE...";
             btnMain.disabled = true;
 
@@ -366,7 +385,6 @@
             const sedeClean = sedeText.replace('Anexo N° ', '').replace(/\d+\s/, '').trim().toUpperCase().replace(/\s+/g, '_');
             const fileName = `${sedeClean}__${nombre}.png`;
 
-            // Clonar para captura en alta resolución
             const tempContainer = document.createElement('div');
             tempContainer.style.position = 'absolute';
             tempContainer.style.left = '-5000px';
@@ -383,13 +401,11 @@
                 }).then(canvas => {
                     const base64Image = canvas.toDataURL('image/png');
 
-                    // 1. DESCARGA LOCAL
                     const link = document.createElement('a');
                     link.download = fileName;
                     link.href = base64Image;
                     link.click();
 
-                    // 2. ENVÍO A GOOGLE DRIVE
                     const webAppUrl = "https://script.google.com/macros/s/AKfycbwra7bkFmm6k_cQWXv6r43AGhDSV4LSrWELPzLPL5_vUdZT2Q6jgYHFdt1oxN7aIRHi/exec"; 
 
                     fetch(webAppUrl, {
@@ -417,7 +433,6 @@
             }, 100);
         }
         
-        // Inicializar
         sync();
     </script>
 </body>
