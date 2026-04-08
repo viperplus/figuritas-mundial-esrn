@@ -376,7 +376,7 @@
             const card = document.getElementById('card');
             const originalBtnText = btnMain.innerText;
             
-            btnMain.innerText = "SUBIENDO A DRIVE...";
+            btnMain.innerText = "⏳ GENERANDO FIGURITA...";
             btnMain.disabled = true;
 
             const nombre = document.getElementById('inName').value.trim().toUpperCase().replace(/\s+/g, '_') || 'JUGADOR';
@@ -394,6 +394,8 @@
             tempContainer.appendChild(cardClone);
 
             setTimeout(() => {
+                btnMain.innerText = "📤 SUBIENDO A DRIVE...";
+                
                 html2canvas(cardClone, {
                     scale: 2,
                     useCORS: true,
@@ -418,15 +420,18 @@
                         })
                     })
                     .then(() => {
-                        alert("✅ ¡LISTO! Figurita descargada y guardada en la carpeta del ESRN Rural.");
+                        btnMain.innerText = "✅ GUARDADO!";
+                        setTimeout(() => {
+                            btnMain.innerText = originalBtnText;
+                            btnMain.disabled = false;
+                        }, 2000);
+                        document.body.removeChild(tempContainer);
                     })
                     .catch(err => {
                         console.error(err);
-                        alert("⚠️ Se descargó en tu equipo, pero hubo un error al subirla a Drive.");
-                    })
-                    .finally(() => {
                         btnMain.innerText = originalBtnText;
                         btnMain.disabled = false;
+                        alert("⚠️ Se descargó en tu equipo, pero hubo un error al subirla a Drive.");
                         document.body.removeChild(tempContainer);
                     });
                 });
