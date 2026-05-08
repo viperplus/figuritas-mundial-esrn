@@ -193,6 +193,35 @@
         }
         .btn-descargar:disabled { background: #94a3b8; cursor: not-allowed; }
 
+        .crosshair {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 0;
+        }
+        .crosshair-row {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .dir-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .dir-btn:hover { background: #e2e8f0; }
+        .dir-btn:active { background: #cbd5e1; }
+        .center-btn { font-size: 1rem; color: var(--azul-afa); }
+
         @media (max-width: 800px) {
             .main-wrapper { flex-direction: column; align-items: center; }
             .editor-card { width: 100%; max-width: 380px; }
@@ -245,6 +274,17 @@
             <div class="input-group"><label>Gustos / Hobbies</label><input type="text" id="inHob" placeholder="FÚTBOL Y DIBUJO" oninput="sync()"></div>
             <div class="input-group"><label>Nació el...</label><input type="date" id="inBirth" oninput="sync()"></div>
             <div class="input-group"><label>Zoom Foto</label><input type="range" id="inZoom" min="10" max="400" value="100" oninput="ajustarImagen()"></div>
+            <div class="input-group"><label>Posición de la Foto</label>
+                <div class="crosshair">
+                    <button class="dir-btn" onclick="moverImagen(0, -20)" title="Arriba">▲</button>
+                    <div class="crosshair-row">
+                        <button class="dir-btn" onclick="moverImagen(-20, 0)" title="Izquierda">◀</button>
+                        <button class="dir-btn center-btn" onclick="centrarImagen()" title="Centrar">◎</button>
+                        <button class="dir-btn" onclick="moverImagen(20, 0)" title="Derecha">▶</button>
+                    </div>
+                    <button class="dir-btn" onclick="moverImagen(0, 20)" title="Abajo">▼</button>
+                </div>
+            </div>
             <div class="input-group"><label>Cargar Foto</label><input type="file" accept="image/*" onchange="previewImg(event)"></div>
             
             <button class="btn-descargar" id="btnMain" onclick="download()">DESCARGAR Y GUARDAR</button>
@@ -342,6 +382,19 @@
         }, {passive: false});
 
         viewport.addEventListener('touchend', () => isDragging = false);
+
+        function moverImagen(dx, dy) {
+            imgX += dx;
+            imgY += dy;
+            ajustarImagen();
+        }
+
+        function centrarImagen() {
+            imgX = 0;
+            imgY = 0;
+            zoomInp.value = 100;
+            ajustarImagen();
+        }
 
         function sync() {
             const s = document.getElementById('inSede');
