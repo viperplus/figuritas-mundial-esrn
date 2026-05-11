@@ -192,6 +192,18 @@
             margin-top: 10px; transition: 0.3s;
         }
         .btn-descargar:disabled { background: #94a3b8; cursor: not-allowed; }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .crosshair {
             display: flex;
@@ -430,7 +442,7 @@
             const card = document.getElementById('card');
             const originalBtnText = btnMain.innerText;
             
-            btnMain.innerText = "⏳ GENERANDO FIGURITA...";
+            btnMain.innerHTML = '<span class="spinner"></span> GENERANDO...';
             btnMain.disabled = true;
 
             const nombre = document.getElementById('inName').value.trim().toUpperCase().replace(/\s+/g, '_') || 'JUGADOR';
@@ -447,7 +459,7 @@
             const cardClone = card.cloneNode(true);
             tempContainer.appendChild(cardClone);
 
-            btnMain.innerText = "📤 SUBIENDO A DRIVE...";
+            btnMain.innerHTML = '<span class="spinner"></span> SUBIENDO A DRIVE...';
 
             html2canvas(cardClone, {
                 scale: 2,
@@ -480,7 +492,7 @@
                             })
                         })
                         .then(r => {
-                            btnMain.innerText = "✅ GUARDADO!";
+                            btnMain.innerHTML = "✅ GUARDADO!";
                             setTimeout(() => {
                                 btnMain.innerText = originalBtnText;
                                 btnMain.disabled = false;
