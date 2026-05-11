@@ -447,49 +447,56 @@
             const cardClone = card.cloneNode(true);
             tempContainer.appendChild(cardClone);
 
-            setTimeout(() => {
-                btnMain.innerText = "📤 SUBIENDO A DRIVE...";
-                
-                html2canvas(cardClone, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: null
-                }).then(canvas => {
-                    const base64Image = canvas.toDataURL('image/png');
+            btnMain.innerText = "📤 SUBIENDO A DRIVE...";
 
+            html2canvas(cardClone, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: null
+            }).then(canvas => {
+                canvas.toBlob(function(blob) {
+                    // Descargar
+                    const blobUrl = URL.createObjectURL(blob);
                     const link = document.createElement('a');
+                    link.href = blobUrl;
                     link.download = fileName;
-                    link.href = base64Image;
+                    document.body.appendChild(link);
                     link.click();
+                    document.body.removeChild(link);
+                    setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
 
-                    const webAppUrl = "https://script.google.com/macros/s/AKfycbwra7bkFmm6k_cQWXv6r43AGhDSV4LSrWELPzLPL5_vUdZT2Q6jgYHFdt1oxN7aIRHi/exec"; 
+                    // Subir a Drive
+                    const reader = new FileReader();
+                    reader.onload = function() {
+                        const base64 = reader.result;
+                        const webAppUrl = "https://script.google.com/macros/s/AKfycbwra7bkFmm6k_cQWXv6r43AGhDSV4LSrWELPzLPL5_vUdZT2Q6jgYHFdt1oxN7aIRHi/exec"; 
 
-                    fetch(webAppUrl, {
-                        method: "POST",
-                        mode: "no-cors", 
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            image: base64Image,
-                            filename: fileName
+                        fetch(webAppUrl, {
+                            method: "POST",
+                            headers: { "Content-Type": "text/plain;charset=UTF-8" },
+                            body: JSON.stringify({
+                                image: base64,
+                                filename: fileName
+                            })
                         })
-                    })
-                    .then(() => {
-                        btnMain.innerText = "✅ GUARDADO!";
-                        setTimeout(() => {
+                        .then(r => {
+                            btnMain.innerText = "✅ GUARDADO!";
+                            setTimeout(() => {
+                                btnMain.innerText = originalBtnText;
+                                btnMain.disabled = false;
+                            }, 2000);
+                            document.body.removeChild(tempContainer);
+                        })
+                        .catch(err => {
+                            console.error(err);
                             btnMain.innerText = originalBtnText;
                             btnMain.disabled = false;
-                        }, 2000);
-                        document.body.removeChild(tempContainer);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        btnMain.innerText = originalBtnText;
-                        btnMain.disabled = false;
-                        alert("⚠️ Se descargó en tu equipo, pero hubo un error al subirla a Drive.");
-                        document.body.removeChild(tempContainer);
-                    });
-                });
-            }, 100);
+                            document.body.removeChild(tempContainer);
+                        });
+                    };
+                    reader.readAsDataURL(blob);
+                }, 'image/png');
+            });
         }
         
         sync();
