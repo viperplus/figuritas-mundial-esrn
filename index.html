@@ -457,9 +457,6 @@
             document.body.appendChild(tempContainer);
             
             const cardClone = card.cloneNode(true);
-            // Fix html2canvas transform miscalculation only
-            const ci = cardClone.querySelector('.info-box');
-            if (ci) { ci.style.transform = 'none'; ci.style.left = '125px'; }
             tempContainer.appendChild(cardClone);
 
             btnMain.innerHTML = '<span class="spinner"></span> SUBIENDO A DRIVE...';
